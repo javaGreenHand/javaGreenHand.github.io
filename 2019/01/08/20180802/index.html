@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="JVM," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="JVM运行时内存区域划分 程序计数器：存储程序当前执行的指令的地址，如果线程执行的是native方法，则程序计数器中的值是undefined。 Java虚拟机栈：存储方法 本地方法栈：同Java虚拟机栈，但存储的是本地方法以上为线程私有的以下为线程共享的 Java堆：存储对象本身以及数组 方法区：存储每个类的信息（包括类的名称、方法信息、字段信息）、静态变量、常量以及编译器编译后的代码  内存溢出">
+<meta name="keywords" content="JVM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM">
+<meta property="og:url" content="http://yoursite.com/2019/01/08/20180802/index.html">
+<meta property="og:site_name" content="WangQiu&#39;s Blog">
+<meta property="og:description" content="JVM运行时内存区域划分 程序计数器：存储程序当前执行的指令的地址，如果线程执行的是native方法，则程序计数器中的值是undefined。 Java虚拟机栈：存储方法 本地方法栈：同Java虚拟机栈，但存储的是本地方法以上为线程私有的以下为线程共享的 Java堆：存储对象本身以及数组 方法区：存储每个类的信息（包括类的名称、方法信息、字段信息）、静态变量、常量以及编译器编译后的代码  内存溢出">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-01-15T00:44:55.037Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JVM">
+<meta name="twitter:description" content="JVM运行时内存区域划分 程序计数器：存储程序当前执行的指令的地址，如果线程执行的是native方法，则程序计数器中的值是undefined。 Java虚拟机栈：存储方法 本地方法栈：同Java虚拟机栈，但存储的是本地方法以上为线程私有的以下为线程共享的 Java堆：存储对象本身以及数组 方法区：存储每个类的信息（包括类的名称、方法信息、字段信息）、静态变量、常量以及编译器编译后的代码  内存溢出">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/08/20180802/"/>
+
+
+
+
+
+  <title>JVM | WangQiu's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">WangQiu's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Success Belongs to the Persevering</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/08/20180802/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王球">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/dlw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WangQiu's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JVM</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-08T09:20:48+08:00">
+                2019-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="JVM运行时内存区域划分"><a href="#JVM运行时内存区域划分" class="headerlink" title="JVM运行时内存区域划分"></a>JVM运行时内存区域划分</h1><ul>
+<li>程序计数器：存储程序当前执行的指令的地址，如果线程执行的是native方法，则程序计数器中的值是undefined。</li>
+<li>Java虚拟机栈：存储方法</li>
+<li>本地方法栈：同Java虚拟机栈，但存储的是本地方法<br>以上为线程私有的<br>以下为线程共享的</li>
+<li>Java堆：存储对象本身以及数组</li>
+<li>方法区：存储每个类的信息（包括类的名称、方法信息、字段信息）、静态变量、常量以及编译器编译后的代码</li>
+</ul>
+<h1 id="内存溢出OOM和堆栈溢出SOE"><a href="#内存溢出OOM和堆栈溢出SOE" class="headerlink" title="内存溢出OOM和堆栈溢出SOE"></a>内存溢出OOM和堆栈溢出SOE</h1><ul>
+<li>SOE：如果线程请求的栈深度大于虚拟机允许的深度时，就会抛出SOE异常</li>
+<li>OOM：如果在进行扩展时无法申请到足够的内存，就会抛出OOM异常</li>
+</ul>
+<h1 id="如何判断对象是否可以回收或存活"><a href="#如何判断对象是否可以回收或存活" class="headerlink" title="如何判断对象是否可以回收或存活"></a>如何判断对象是否可以回收或存活</h1><h1 id="常见的GC回收算法及其含义"><a href="#常见的GC回收算法及其含义" class="headerlink" title="常见的GC回收算法及其含义"></a>常见的GC回收算法及其含义</h1><ul>
+<li>标记-清楚算法</li>
+<li>复制算法</li>
+<li>标记-整理算法</li>
+<li>分代收集算法</li>
+</ul>
+<h1 id="常见的JVM性能监控和故障处理工具类"><a href="#常见的JVM性能监控和故障处理工具类" class="headerlink" title="常见的JVM性能监控和故障处理工具类"></a>常见的JVM性能监控和故障处理工具类</h1><ul>
+<li>命令行工具<ul>
+<li>jps</li>
+<li>jstat</li>
+<li>jmap</li>
+<li>jinfo</li>
+</ul>
+</li>
+<li>可视化工具<ul>
+<li>jconsole</li>
+</ul>
+</li>
+</ul>
+<h1 id="JVM如何设置参数"><a href="#JVM如何设置参数" class="headerlink" title="JVM如何设置参数"></a>JVM如何设置参数</h1><h1 id="JVM性能调优"><a href="#JVM性能调优" class="headerlink" title="JVM性能调优"></a>JVM性能调优</h1><h1 id="类加载器、双亲委派模型、一个类的生命周期、类是如何加载到JVM中的"><a href="#类加载器、双亲委派模型、一个类的生命周期、类是如何加载到JVM中的" class="headerlink" title="类加载器、双亲委派模型、一个类的生命周期、类是如何加载到JVM中的"></a>类加载器、双亲委派模型、一个类的生命周期、类是如何加载到JVM中的</h1><h1 id="类加载的过程：加载、验证、准备、解析、初始化"><a href="#类加载的过程：加载、验证、准备、解析、初始化" class="headerlink" title="类加载的过程：加载、验证、准备、解析、初始化"></a>类加载的过程：加载、验证、准备、解析、初始化</h1><h1 id="强引用、软引用、弱引用、虚引用"><a href="#强引用、软引用、弱引用、虚引用" class="headerlink" title="强引用、软引用、弱引用、虚引用"></a>强引用、软引用、弱引用、虚引用</h1><h1 id="Java内存模型JMM"><a href="#Java内存模型JMM" class="headerlink" title="Java内存模型JMM"></a>Java内存模型JMM</h1>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wxpay.jpg" alt="王球 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/zfbpay.jpg" alt="王球 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JVM/" rel="tag"># JVM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/08/20180815/" rel="next" title="开源框架">
+                <i class="fa fa-chevron-left"></i> 开源框架
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/08/20180916/" rel="prev" title="Servlet容器">
+                Servlet容器 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/dlw.jpg"
+               alt="王球" />
+          <p class="site-author-name" itemprop="name">王球</p>
+           
+              <p class="site-description motion-element" itemprop="description">总结,随笔</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/javaGreenHand" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/3fwangqiu/activities" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM运行时内存区域划分"><span class="nav-number">1.</span> <span class="nav-text">JVM运行时内存区域划分</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内存溢出OOM和堆栈溢出SOE"><span class="nav-number">2.</span> <span class="nav-text">内存溢出OOM和堆栈溢出SOE</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何判断对象是否可以回收或存活"><span class="nav-number">3.</span> <span class="nav-text">如何判断对象是否可以回收或存活</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见的GC回收算法及其含义"><span class="nav-number">4.</span> <span class="nav-text">常见的GC回收算法及其含义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见的JVM性能监控和故障处理工具类"><span class="nav-number">5.</span> <span class="nav-text">常见的JVM性能监控和故障处理工具类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM如何设置参数"><span class="nav-number">6.</span> <span class="nav-text">JVM如何设置参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM性能调优"><span class="nav-number">7.</span> <span class="nav-text">JVM性能调优</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类加载器、双亲委派模型、一个类的生命周期、类是如何加载到JVM中的"><span class="nav-number">8.</span> <span class="nav-text">类加载器、双亲委派模型、一个类的生命周期、类是如何加载到JVM中的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类加载的过程：加载、验证、准备、解析、初始化"><span class="nav-number">9.</span> <span class="nav-text">类加载的过程：加载、验证、准备、解析、初始化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#强引用、软引用、弱引用、虚引用"><span class="nav-number">10.</span> <span class="nav-text">强引用、软引用、弱引用、虚引用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Java内存模型JMM"><span class="nav-number">11.</span> <span class="nav-text">Java内存模型JMM</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王球</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
