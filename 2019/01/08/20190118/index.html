@@ -93,18 +93,18 @@
 
 
 
-<meta name="description" content="如果连业务代码都写不好，那就无法打更高级的怪，那么如何写出零BUG的代码呢？自己要做好一下几点：  需求分析 系统设计 自测  除了这些还有一些习惯，比如：上午攻坚等">
+<meta name="description" content="如果连业务代码都写不好，那就无法打更高级的怪，那么如何写出零BUG的代码呢？我要做好以下几点：  需求分析 系统设计 自测  除了这些还有一些习惯，比如：上午攻坚等">
 <meta name="keywords" content="效率">
 <meta property="og:type" content="article">
 <meta property="og:title" content="零BUG之路">
 <meta property="og:url" content="http://yoursite.com/2019/01/08/20190118/index.html">
 <meta property="og:site_name" content="WangQiu&#39;s Blog">
-<meta property="og:description" content="如果连业务代码都写不好，那就无法打更高级的怪，那么如何写出零BUG的代码呢？自己要做好一下几点：  需求分析 系统设计 自测  除了这些还有一些习惯，比如：上午攻坚等">
+<meta property="og:description" content="如果连业务代码都写不好，那就无法打更高级的怪，那么如何写出零BUG的代码呢？我要做好以下几点：  需求分析 系统设计 自测  除了这些还有一些习惯，比如：上午攻坚等">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-01-18T02:56:16.794Z">
+<meta property="og:updated_time" content="2019-01-25T02:23:06.933Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="零BUG之路">
-<meta name="twitter:description" content="如果连业务代码都写不好，那就无法打更高级的怪，那么如何写出零BUG的代码呢？自己要做好一下几点：  需求分析 系统设计 自测  除了这些还有一些习惯，比如：上午攻坚等">
+<meta name="twitter:description" content="如果连业务代码都写不好，那就无法打更高级的怪，那么如何写出零BUG的代码呢？我要做好以下几点：  需求分析 系统设计 自测  除了这些还有一些习惯，比如：上午攻坚等">
 
 
 
@@ -343,14 +343,30 @@
       
 
       
-        <p>如果连业务代码都写不好，那就无法打更高级的怪，那么如何写出零BUG的代码呢？自己要做好一下几点：</p>
+        <p>如果连业务代码都写不好，那就无法打更高级的怪，那么如何写出零BUG的代码呢？我要做好以下几点：</p>
 <ol>
 <li>需求分析</li>
 <li>系统设计</li>
 <li>自测</li>
 </ol>
 <p>除了这些还有一些习惯，比如：上午攻坚等<br><a id="more"></a></p>
-<h1 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h1><h1 id="系统设计"><a href="#系统设计" class="headerlink" title="系统设计"></a>系统设计</h1><h1 id="自测"><a href="#自测" class="headerlink" title="自测"></a>自测</h1>
+<h1 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h1><p>需求文档写的是做什么，我要做的就是尽量细化需求，减少遗漏，减少不合理的需求，这个过程可以画用例图来明确需求。</p>
+<h1 id="系统设计"><a href="#系统设计" class="headerlink" title="系统设计"></a>系统设计</h1><p>知道做什么之后，要确定怎么做最好，可以画各种图来模拟实际开发过程。</p>
+<h1 id="自测"><a href="#自测" class="headerlink" title="自测"></a>自测</h1><p>总认为自己写的代码坚不可摧，只有到测试的时候才发现原来这里有bug，那里有bug。一旦交付测试，改动的代价就非常大，造成不好的影响。所以不管有多么难以进行测试，都要硬着头皮上，测完之后会发现原来也不是那么难，反而对整个系统有了更清晰的认识，一举两得。</p>
+<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><p>早上的效率很高，适合进行复杂的工作，而下午适合进行一些简单的工作，比如写代码。<br>Merge Request<br>SonarLint<br>双重保障，提高代码质量</p>
+<p>待补充以下安装教程：</p>
+<ul>
+<li>redis</li>
+<li>zookeeper</li>
+<li>kafka</li>
+<li>python</li>
+<li>storm</li>
+</ul>
+<p>redis启动：.\redis-server.exe .\redis.windows.conf（redis安装目录）<br>redis.config：cluster-enabled yes 启动集群</p>
+<p>zookeeper启动：zkServer（任何目录）</p>
+<p>kafka启动：.\bin\windows\kafka-server-start.bat .\config\server.properties（redis安装目录，注意点：jdk路径不能有空格存在</p>
+<p>storm启动：</p>
+
       
     </div>
 
@@ -413,8 +429,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/01/08/20171212/" rel="next" title="MySQL 5.7.20安装和卸载">
-                <i class="fa fa-chevron-left"></i> MySQL 5.7.20安装和卸载
+              <a href="/2019/01/08/20190117/" rel="next" title="初识设计模式">
+                <i class="fa fa-chevron-left"></i> 初识设计模式
               </a>
             
           </div>
@@ -422,6 +438,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/21/20190121/" rel="prev" title="数据结构相关类的实现原理">
+                数据结构相关类的实现原理 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -494,7 +514,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -505,7 +525,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -516,7 +536,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -571,7 +591,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#需求分析"><span class="nav-number">1.</span> <span class="nav-text">需求分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#系统设计"><span class="nav-number">2.</span> <span class="nav-text">系统设计</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自测"><span class="nav-number">3.</span> <span class="nav-text">自测</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#需求分析"><span class="nav-number">1.</span> <span class="nav-text">需求分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#系统设计"><span class="nav-number">2.</span> <span class="nav-text">系统设计</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自测"><span class="nav-number">3.</span> <span class="nav-text">自测</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他"><span class="nav-number">4.</span> <span class="nav-text">其他</span></a></li></ol></div>
             
 
           </div>
